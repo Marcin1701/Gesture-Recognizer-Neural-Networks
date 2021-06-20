@@ -70,7 +70,7 @@ def main():
 
     # initialize num of frames
     num_frames = 0
-    start_recording = False
+    start_recording = True
 
     # keep looping, until interrupted
     while (True):
@@ -113,8 +113,8 @@ def main():
                 # draw the segmented region and display the frame
                 cv2.drawContours(clone, [segmented + (right, top)], -1, (0, 0, 255))
                 if start_recording:
-                    cv2.imwrite('Temp.png', thresholded)
-                    resizeImage('Temp.png')
+                    cv2.imwrite('PredictedImage.png', thresholded)
+                    resizeImage('PredictedImage.png')
                     predictedClass, confidence = getPredictedClass()
                     showStatistics(predictedClass, confidence)
                 cv2.imshow("Thesholded", thresholded)
@@ -131,17 +131,10 @@ def main():
         # observe the keypress by the user
         keypress = cv2.waitKey(1) & 0xFF
 
-        # if the user pressed "q", then stop looping
-        if keypress == ord("q"):
-            break
-
-        if keypress == ord("s"):
-            start_recording = True
-
 
 def getPredictedClass():
     # Predict
-    image = cv2.imread('Temp.png')
+    image = cv2.imread('PredictedImage.png')
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     prediction = model.predict([gray_image.reshape(89, 100, 1)])
     return np.argmax(prediction), (np.amax(prediction) / (prediction[0][0] + prediction[0][1] + prediction[0][2]))
