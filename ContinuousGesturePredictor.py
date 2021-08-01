@@ -131,13 +131,11 @@ def main():
         # observe the keypress by the user
         keypress = cv2.waitKey(1) & 0xFF
 
+        start_recording = True
+
         # if the user pressed "q", then stop looping
         if keypress == ord("q"):
             break
-
-        if keypress == ord("s"):
-            start_recording = True
-
 
 def getPredictedClass():
     # Predict
@@ -157,6 +155,16 @@ def showStatistics(predictedClass, confidence):
         className = "Palm"
     elif predictedClass == 2:
         className = "Fist"
+    elif predictedClass == 3:
+        className = "None"
+    elif predictedClass == 4:
+        className = "Ok"
+    elif predictedClass == 5:
+        className = "Peace"
+    elif predictedClass == 6:
+        className = "Straight"
+    elif predictedClass == 7:
+        className = "Thumb"
 
     cv2.putText(textImage, "Pedicted Class : " + className,
                 (30, 30),
@@ -200,7 +208,7 @@ convnet = max_pool_2d(convnet, 2)
 convnet = fully_connected(convnet, 1000, activation='relu')
 convnet = dropout(convnet, 0.75)
 
-convnet = fully_connected(convnet, 3, activation='softmax')
+convnet = fully_connected(convnet, 8, activation='softmax')
 
 convnet = regression(convnet, optimizer='adam', learning_rate=0.001, loss='categorical_crossentropy', name='regression')
 
