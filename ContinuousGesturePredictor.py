@@ -1,13 +1,13 @@
-import tensorflow as tf
 import tflearn
+import numpy as np
+import cv2
+import imutils
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
 from tensorflow.python.framework import ops
-import numpy as np
 from PIL import Image
-import cv2
-import imutils
+
 
 # global variables
 bg = None
@@ -55,7 +55,7 @@ def segment(image, threshold=25):
     else:
         # based on contour area, get the maximum contour which is the hand
         segmented = max(cnts, key=cv2.contourArea)
-        return (thresholded, segmented)
+        return thresholded, segmented
 
 
 def main():
@@ -73,7 +73,7 @@ def main():
     start_recording = False
 
     # keep looping, until interrupted
-    while (True):
+    while True:
         # get the current frame
         (grabbed, frame) = camera.read()
 
@@ -137,12 +137,17 @@ def main():
         if keypress == ord("q"):
             break
 
+
 def getPredictedClass():
     # Predict
     image = cv2.imread('Temp.png')
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     prediction = model.predict([gray_image.reshape(89, 100, 1)])
-    return np.argmax(prediction), (np.amax(prediction) / (prediction[0][0] + prediction[0][1] + prediction[0][2]))
+    return np.argmax(prediction), \
+           (np.amax(prediction) /
+            (prediction[0][0] + prediction[0][1] + prediction[0][2] +
+             prediction[0][3] + prediction[0][4] + prediction[0][5] +
+             prediction[0][6] + prediction[0][7]))
 
 
 def showStatistics(predictedClass, confidence):
@@ -166,7 +171,7 @@ def showStatistics(predictedClass, confidence):
     elif predictedClass == 7:
         className = "Thumb"
 
-    cv2.putText(textImage, "Pedicted Class : " + className,
+    cv2.putText(textImage, "Predicted Class : " + className,
                 (30, 30),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1,
