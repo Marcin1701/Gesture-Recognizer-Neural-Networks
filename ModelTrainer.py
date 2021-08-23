@@ -12,7 +12,7 @@ class ModelTrainer:
 
     def train_network(self):
         # Train network,
-        self.model.fit(self.loadedImages, self.outputVectors, n_epoch=5,
+        self.model.fit(self.loadedImages, self.outputVectors, n_epoch=20,
                        validation_set=(
                            load_test_images(),
                            init_test_labels()
@@ -46,8 +46,8 @@ class ModelTrainer:
 
         self.conv_net = fully_connected(self.conv_net, 1000, activation='relu')
         self.conv_net = dropout(self.conv_net, 0.75)
-        # 64 -> 3
-        # 3 neurons on the output
+        # 64 -> 8
+        # 8 neurons on the output
         self.conv_net = fully_connected(self.conv_net, 8, activation='softmax')
 
         self.conv_net = regression(self.conv_net, optimizer='adam', learning_rate=0.001,
